@@ -3,80 +3,65 @@
 @section('title', 'Calendario de Visitas - Sistema de Visitas')
 
 @section('content')
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">
-        <i class="fas fa-calendar-check text-success me-2"></i>
+<div class="flex items-center justify-between py-3 mb-6 border-b border-gray-200">
+    <h1 class="text-2xl font-bold text-gray-900 flex items-center">
+        <i class="fas fa-calendar-check text-green-600 mr-2"></i>
         Calendario de Visitas
     </h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()">
-                <i class="fas fa-print me-1"></i>Imprimir
-            </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-download me-1"></i>Exportar
-            </button>
-        </div>
-    </div>
+    <div></div>
 </div>
 
 
 
 <!-- Leyenda -->
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0">
-            <i class="fas fa-info-circle me-2"></i>Leyenda
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+    <div class="px-6 py-4 border-b border-gray-200">
+        <h5 class="text-lg font-semibold text-gray-900 flex items-center">
+            <i class="fas fa-info-circle mr-2 text-gray-500"></i>Leyenda
         </h5>
     </div>
-    <div class="card-body">
-                 <div class="row">
-             <div class="col-md-4">
-                 <div class="d-flex align-items-center mb-2">
-                     <div class="calendar-legend-item bg-danger me-2"></div>
-                     <span>Días No Disponibles</span>
-                 </div>
-             </div>
-             <div class="col-md-4">
-                 <div class="d-flex align-items-center mb-2">
-                     <div class="calendar-legend-item bg-warning me-2"></div>
-                     <span>Días Agendados</span>
-                 </div>
-             </div>
-             <div class="col-md-4">
-                 <div class="d-flex align-items-center mb-2">
-                     <div class="calendar-legend-item bg-success me-2"></div>
-                     <span>Días Disponibles</span>
-                 </div>
-             </div>
-         </div>
+    <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="flex items-center">
+                <div class="calendar-legend-item bg-red-600 mr-2"></div>
+                <span class="text-gray-700">Días No Disponibles</span>
+            </div>
+            <div class="flex items-center">
+                <div class="calendar-legend-item bg-yellow-500 mr-2"></div>
+                <span class="text-gray-700">Días Agendados</span>
+            </div>
+            <div class="flex items-center">
+                <div class="calendar-legend-item bg-green-600 mr-2"></div>
+                <span class="text-gray-700">Días Disponibles</span>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Calendario -->
-<div class="card">
-    <div class="card-body">
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+    <div class="p-4">
         <div id="calendar"></div>
     </div>
-</div>
+    </div>
 
 <!-- Modal de Detalles de Visita -->
-<div class="modal fade" id="visitModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-eye me-2"></i>Detalles de la Visita
+<div class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full hidden z-50" id="visitModal">
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto">
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <h5 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-eye mr-2 text-gray-600"></i>Detalles de la Visita
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="text-gray-400 hover:text-gray-600 transition-colors" onclick="document.getElementById('visitModal').classList.add('hidden')">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
             </div>
-            <div class="modal-body" id="visitModalBody">
-                <!-- Contenido dinámico -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <a href="#" class="btn btn-primary" id="viewDetailsBtn">
-                    <i class="fas fa-external-link-alt me-1"></i>Ver Detalles Completos
+            <div class="p-6" id="visitModalBody"></div>
+            <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
+                <button type="button" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none" onclick="document.getElementById('visitModal').classList.add('hidden')">Cerrar</button>
+                <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-sky-600 hover:bg-sky-700 focus:outline-none" id="viewDetailsBtn">
+                    <i class="fas fa-external-link-alt mr-2"></i>Ver Detalles Completos
                 </a>
             </div>
         </div>

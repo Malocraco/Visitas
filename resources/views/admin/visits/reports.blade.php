@@ -3,54 +3,42 @@
 @section('title', 'Reportes - Sistema de Visitas')
 
 @section('content')
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">
-        <i class="fas fa-chart-bar text-info me-2"></i>
+<div class="flex items-center justify-between py-3 mb-6 border-b border-gray-200">
+    <h1 class="text-2xl font-bold text-gray-900 flex items-center">
+        <i class="fas fa-chart-bar text-sky-600 mr-2"></i>
         Reportes y Estadísticas
     </h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()">
-                <i class="fas fa-print me-1"></i>Imprimir
-            </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-download me-1"></i>Exportar PDF
-            </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-file-excel me-1"></i>Exportar Excel
-            </button>
-        </div>
-    </div>
+    <div></div>
 </div>
 
 <!-- Filtros de Reporte -->
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0">
-            <i class="fas fa-filter me-2"></i>Filtros de Reporte
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+    <div class="px-6 py-4 border-b border-gray-200">
+        <h5 class="text-lg font-semibold text-gray-900 flex items-center">
+            <i class="fas fa-filter mr-2 text-gray-500"></i>Filtros de Reporte
         </h5>
     </div>
-    <div class="card-body">
-        <form method="GET" action="{{ route('admin.visits.reports') }}" class="row g-3">
-            <div class="col-md-3">
-                <label for="report_type" class="form-label">Tipo de Reporte</label>
-                <select class="form-select" id="report_type" name="report_type">
+    <div class="px-6 py-5">
+        <form method="GET" action="{{ route('admin.visits.reports') }}" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+                <label for="report_type" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Reporte</label>
+                <select class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white text-gray-900" id="report_type" name="report_type">
                     <option value="general" {{ request('report_type') == 'general' ? 'selected' : '' }}>General</option>
                     <option value="monthly" {{ request('report_type') == 'monthly' ? 'selected' : '' }}>Mensual</option>
                     <option value="institution" {{ request('report_type') == 'institution' ? 'selected' : '' }}>Por Institución</option>
                 </select>
             </div>
-            <div class="col-md-3">
-                <label for="date_from" class="form-label">Fecha Desde</label>
-                <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request('date_from') }}">
+            <div>
+                <label for="date_from" class="block text-sm font-medium text-gray-700 mb-2">Fecha Desde</label>
+                <input type="date" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white text-gray-900" id="date_from" name="date_from" value="{{ request('date_from') }}">
             </div>
-            <div class="col-md-3">
-                <label for="date_to" class="form-label">Fecha Hasta</label>
-                <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request('date_to') }}">
+            <div>
+                <label for="date_to" class="block text-sm font-medium text-gray-700 mb-2">Fecha Hasta</label>
+                <input type="date" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white text-gray-900" id="date_to" name="date_to" value="{{ request('date_to') }}">
             </div>
-            <div class="col-md-3">
-                <label for="institution_type" class="form-label">Tipo de Institución</label>
-                <select class="form-select" id="institution_type" name="institution_type">
+            <div>
+                <label for="institution_type" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Institución</label>
+                <select class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white text-gray-900" id="institution_type" name="institution_type">
                     <option value="">Todos</option>
                     <option value="empresa" {{ request('institution_type') == 'empresa' ? 'selected' : '' }}>Empresa</option>
                     <option value="universidad" {{ request('institution_type') == 'universidad' ? 'selected' : '' }}>Universidad</option>
@@ -58,12 +46,12 @@
                     <option value="otro" {{ request('institution_type') == 'otro' ? 'selected' : '' }}>Otro</option>
                 </select>
             </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search me-1"></i>Generar Reporte
+            <div class="sm:col-span-2 lg:col-span-4 flex items-center space-x-3 mt-1">
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition">
+                    <i class="fas fa-search mr-2"></i>Generar Reporte
                 </button>
-                <a href="{{ route('admin.visits.reports') }}" class="btn btn-secondary">
-                    <i class="fas fa-times me-1"></i>Limpiar
+                <a href="{{ route('admin.visits.reports') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition">
+                    <i class="fas fa-times mr-2"></i>Limpiar
                 </a>
             </div>
         </form>
@@ -71,137 +59,111 @@
 </div>
 
 <!-- Estadísticas Generales -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h3 class="mb-0">{{ $totalVisits }}</h3>
-                        <p class="mb-0">Total de Visitas</p>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-chart-line fa-3x"></i>
-                    </div>
-                </div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="rounded-xl bg-sky-600 text-white shadow-sm">
+        <div class="p-5 flex items-center justify-between">
+            <div>
+                <h3 class="text-3xl font-bold">{{ $totalVisits }}</h3>
+                <p class="opacity-90">Total de Visitas</p>
             </div>
+            <i class="fas fa-chart-line fa-3x opacity-80"></i>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h3 class="mb-0">{{ $thisMonthVisits }}</h3>
-                        <p class="mb-0">Visitas este Mes</p>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-calendar-alt fa-3x"></i>
-                    </div>
-                </div>
+    <div class="rounded-xl bg-emerald-600 text-white shadow-sm">
+        <div class="p-5 flex items-center justify-between">
+            <div>
+                <h3 class="text-3xl font-bold">{{ $thisMonthVisits }}</h3>
+                <p class="opacity-90">Visitas este Mes</p>
             </div>
+            <i class="fas fa-calendar-alt fa-3x opacity-80"></i>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card bg-info text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h3 class="mb-0">{{ $thisYearVisits }}</h3>
-                        <p class="mb-0">Visitas este Año</p>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-calendar fa-3x"></i>
-                    </div>
-                </div>
+    <div class="rounded-xl bg-cyan-600 text-white shadow-sm">
+        <div class="p-5 flex items-center justify-between">
+            <div>
+                <h3 class="text-3xl font-bold">{{ $thisYearVisits }}</h3>
+                <p class="opacity-90">Visitas este Año</p>
             </div>
+            <i class="fas fa-calendar fa-3x opacity-80"></i>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <!-- Gráfico de Visitas por Estado -->
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-pie-chart me-2"></i>Visitas por Estado
-                </h5>
-            </div>
-            <div class="card-body">
-                <canvas id="statusChart" width="400" height="200"></canvas>
-            </div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h5 class="text-lg font-semibold text-gray-900 flex items-center">
+                <i class="fas fa-pie-chart mr-2 text-gray-500"></i>Visitas por Estado
+            </h5>
+        </div>
+        <div class="p-6">
+            <div class="h-64"><canvas id="statusChart"></canvas></div>
         </div>
     </div>
 
-    <!-- Gráfico de Visitas por Mes -->
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-chart-line me-2"></i>Visitas por Mes (Últimos 12 meses)
-                </h5>
-            </div>
-            <div class="card-body">
-                <canvas id="monthlyChart" width="400" height="200"></canvas>
-            </div>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h5 class="text-lg font-semibold text-gray-900 flex items-center">
+                <i class="fas fa-chart-line mr-2 text-gray-500"></i>Visitas por Mes (Últimos 12 meses)
+            </h5>
+        </div>
+        <div class="p-6">
+            <div class="h-64"><canvas id="monthlyChart"></canvas></div>
         </div>
     </div>
 </div>
 
 <!-- Top Instituciones Visitantes -->
-<div class="row">
-    <div class="col-md-8 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-trophy me-2"></i>Top 10 Instituciones Visitantes
-                </h5>
-            </div>
-            <div class="card-body">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+    <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h5 class="text-lg font-semibold text-gray-900 flex items-center">
+                <i class="fas fa-trophy mr-2 text-amber-500"></i>Top 10 Instituciones Visitantes
+            </h5>
+        </div>
+        <div class="p-6">
                 @if($topInstitutions->count() > 0)
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead class="table-dark">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-800">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Institución</th>
-                                    <th>Tipo</th>
-                                    <th>Total Visitas</th>
-                                    <th>Porcentaje</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">#</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Institución</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tipo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Total Visitas</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Porcentaje</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($topInstitutions as $index => $institution)
                                 <tr>
-                                    <td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         @if($index == 0)
-                                            <i class="fas fa-medal text-warning"></i>
+                                            <i class="fas fa-medal text-yellow-500"></i>
                                         @elseif($index == 1)
-                                            <i class="fas fa-medal text-secondary"></i>
+                                            <i class="fas fa-medal text-gray-400"></i>
                                         @elseif($index == 2)
-                                            <i class="fas fa-medal text-bronze"></i>
+                                            <i class="fas fa-medal text-amber-700"></i>
                                         @else
                                             {{ $index + 1 }}
                                         @endif
                                     </td>
-                                    <td>
-                                        <strong>{{ $institution->user->institution_name }}</strong><br>
-                                        <small class="text-muted">{{ $institution->user->name }}</small>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <div class="font-semibold">{{ $institution->user->institution_name }}</div>
+                                        <div class="text-xs text-gray-500">{{ $institution->user->name }}</div>
                                     </td>
-                                    <td>
-                                        <span class="badge bg-secondary">{{ ucfirst($institution->user->institution_type) }}</span>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ ucfirst($institution->user->institution_type) }}</span>
                                     </td>
-                                    <td>
-                                        <strong>{{ $institution->total }}</strong>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <span class="font-semibold">{{ $institution->total }}</span>
                                     </td>
-                                    <td>
-                                        <div class="progress" style="height: 20px;">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <div class="w-full bg-gray-100 rounded-full h-5 overflow-hidden">
                                             @php
                                                 $percentage = ($institution->total / $totalVisits) * 100;
                                             @endphp
-                                            <div class="progress-bar bg-primary" 
-                                                 style="width: {{ $percentage }}%">
+                                            <div class="h-5 bg-sky-500 text-white text-xs font-semibold flex items-center justify-center" style="width: {{ $percentage }}%">
                                                 {{ number_format($percentage, 1) }}%
                                             </div>
                                         </div>
@@ -212,53 +174,50 @@
                         </table>
                     </div>
                 @else
-                    <div class="text-center py-4">
-                        <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">No hay datos suficientes para mostrar estadísticas.</p>
+                    <div class="text-center py-8">
+                        <i class="fas fa-chart-bar fa-3x text-gray-400 mb-3"></i>
+                        <p class="text-gray-500">No hay datos suficientes para mostrar estadísticas.</p>
                     </div>
                 @endif
-            </div>
         </div>
     </div>
 
     <!-- Resumen de Estados -->
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-list me-2"></i>Resumen por Estado
-                </h5>
-            </div>
-            <div class="card-body">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h5 class="text-lg font-semibold text-gray-900 flex items-center">
+                <i class="fas fa-list mr-2 text-gray-500"></i>Resumen por Estado
+            </h5>
+        </div>
+        <div class="p-6">
                 @foreach($visitsByStatus as $status)
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center text-gray-700">
                         @switch($status->status)
                             @case('pending')
-                                <i class="fas fa-clock text-warning me-2"></i>
+                                <i class="fas fa-clock text-yellow-500 mr-2"></i>
                                 <span>Pendientes</span>
                                 @break
                             @case('approved')
-                                <i class="fas fa-check text-success me-2"></i>
+                                <i class="fas fa-check text-green-600 mr-2"></i>
                                 <span>Aprobadas</span>
                                 @break
                             @case('completed')
-                                <i class="fas fa-flag-checkered text-info me-2"></i>
+                                <i class="fas fa-flag-checkered text-sky-600 mr-2"></i>
                                 <span>Completadas</span>
                                 @break
                             @case('rejected')
-                                <i class="fas fa-times text-danger me-2"></i>
+                                <i class="fas fa-times text-red-600 mr-2"></i>
                                 <span>Rechazadas</span>
                                 @break
                         @endswitch
                     </div>
-                    <div>
-                        <strong>{{ $status->total }}</strong>
-                        <small class="text-muted">({{ number_format(($status->total / $totalVisits) * 100, 1) }}%)</small>
+                    <div class="text-right">
+                        <span class="font-semibold text-gray-900">{{ $status->total }}</span>
+                        <span class="text-xs text-gray-500">({{ number_format(($status->total / $totalVisits) * 100, 1) }}%)</span>
                     </div>
                 </div>
                 @endforeach
-            </div>
         </div>
     </div>
 </div>

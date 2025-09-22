@@ -318,51 +318,42 @@
                 </li>
                 
                 <!-- Modal para marcar como completada -->
-                <div id="completeModal{{ $visit->id }}" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-                    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-                        <div class="mt-3">
-                            <div class="flex items-center justify-center w-12 h-12 mx-auto bg-green-100 rounded-full">
-                                <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <div class="mt-2 px-7 py-3">
-                                <h3 class="text-lg font-medium text-gray-900 text-center">Marcar Visita como Completada</h3>
-                                <div class="mt-2 px-7 py-3">
-                                    <div class="text-sm text-gray-600 space-y-1">
-                                        <p><strong>Visitante:</strong> <span id="completeVisitorName{{ $visit->id }}"></span></p>
-                                        <p><strong>Fecha:</strong> <span id="completeVisitDate{{ $visit->id }}"></span></p>
-                                        <p><strong>Actividades:</strong> 
-                                            @foreach($visit->activities as $activity)
-                                                {{ $activity->name }}{{ !$loop->last ? ', ' : '' }}
-                                            @endforeach
-                                        </p>
+                <div id="completeModal{{ $visit->id }}" class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+                    <div class="relative min-h-screen flex items-center justify-center p-4">
+                        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-auto">
+                            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
                                     </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Marcar Visita como Completada</h3>
+                                </div>
+                                <button type="button" onclick="closeCompleteModal({{ $visit->id }})" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                            </div>
+                            <div class="p-6">
+                                <div class="text-sm text-gray-700 space-y-1 mb-4">
+                                    <p><span class="font-medium">Visitante:</span> <span id="completeVisitorName{{ $visit->id }}"></span></p>
+                                    <p><span class="font-medium">Fecha:</span> <span id="completeVisitDate{{ $visit->id }}"></span></p>
+                                    <p><span class="font-medium">Actividades:</span>
+                                        @foreach($visit->activities as $activity)
+                                            {{ $activity->name }}{{ !$loop->last ? ', ' : '' }}
+                                        @endforeach
+                                    </p>
                                 </div>
                                 <form action="{{ route('admin.visits.complete', $visit->id) }}" method="POST">
                                     @csrf
-                                    <div class="mt-4">
-                                        <label for="completion_notes_{{ $visit->id }}" class="block text-sm font-medium text-gray-700 mb-1">Notas de Completación</label>
-                                        <textarea id="completion_notes_{{ $visit->id }}" 
-                                                  name="completion_notes" 
-                                                  rows="3" 
-                                                  class="input-field" 
-                                                  placeholder="Observaciones sobre la visita..."></textarea>
-                                    </div>
-                                    <div class="items-center px-4 py-3">
-                                        <div class="flex space-x-3">
-                                            <button type="button" 
-                                                    onclick="closeCompleteModal({{ $visit->id }})" 
-                                                    class="btn-outline flex-1">
-                                                Cancelar
-                                            </button>
-                                            <button type="submit" class="btn-success flex-1">
-                                                <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                                </svg>
-                                                Completar
-                                            </button>
-                                        </div>
+                                    <label for="completion_notes_{{ $visit->id }}" class="block text-sm font-medium text-gray-700 mb-2">Notas de Completación</label>
+                                    <textarea id="completion_notes_{{ $visit->id }}" name="completion_notes" rows="3" class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Observaciones sobre la visita..."></textarea>
+                                    <div class="mt-6 flex space-x-3">
+                                        <button type="button" onclick="closeCompleteModal({{ $visit->id }})" class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Cancelar</button>
+                                        <button type="submit" class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                            <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                            Completar
+                                        </button>
                                     </div>
                                 </form>
                             </div>

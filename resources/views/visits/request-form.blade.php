@@ -200,6 +200,24 @@
                                        readonly
                                        required>
                             </div>
+                    <div>
+                        <label for="institution_type" class="form-label">
+                            Tipo de Institución *
+                        </label>
+                        @php($userInstitutionType = auth()->user()->institution_type)
+                        <select id="institution_type" name="institution_type" 
+                                class="form-input @error('institution_type') border-danger-300 focus:border-danger-500 focus:ring-danger-500 @enderror" 
+                                {{ $userInstitutionType ? '' : '' }} required>
+                            <option value="" {{ old('institution_type', $userInstitutionType) === null ? 'selected' : '' }}>Seleccione...</option>
+                            <option value="empresa" {{ old('institution_type', $userInstitutionType) === 'empresa' ? 'selected' : '' }}>Empresa</option>
+                            <option value="universidad" {{ old('institution_type', $userInstitutionType) === 'universidad' ? 'selected' : '' }}>Universidad</option>
+                            <option value="colegio" {{ old('institution_type', $userInstitutionType) === 'colegio' ? 'selected' : '' }}>Colegio</option>
+                            <option value="otro" {{ old('institution_type', $userInstitutionType) === 'otro' ? 'selected' : '' }}>Otro</option>
+                        </select>
+                        @error('institution_type')
+                            <p class="form-error">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
                             </div>
                         </div>
