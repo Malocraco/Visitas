@@ -63,35 +63,47 @@
                             @endif
                     
                     @if(auth()->user()->isSuperAdmin())
+                        @php
+                            $isVisitsSection = request()->routeIs('admin.visits.*');
+                            $isUsersSection = request()->routeIs('admin.users.*') || request()->routeIs('admin.roles.*');
+                            $isCommsSection = request()->routeIs('chat.*');
+                        @endphp
                         <!-- Sección: Gestión de Visitas -->
                         <div class="mt-6">
-                            <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gestión de Visitas</p>
-                            <div class="mt-2 space-y-1">
-                                <a href="{{ route('admin.visits.pending') }}" class="sidebar-link {{ request()->routeIs('admin.visits.pending') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                            <button type="button" 
+                                    class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:bg-gray-50 rounded-md transition-colors"
+                                    onclick="toggleSection('visits-section')">
+                                <span>Gestión de Visitas</span>
+                                <svg class="h-4 w-4 transition-transform duration-200" id="visits-section-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="mt-2 space-y-1 {{ $isVisitsSection ? '' : 'hidden' }}" id="visits-section">
+                                <a href="{{ route('admin.visits.pending') }}" class="sidebar-link pl-8 {{ request()->routeIs('admin.visits.pending') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                                     <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     Solicitudes Pendientes
                                 </a>
-                                <a href="{{ route('admin.visits.all') }}" class="sidebar-link {{ request()->routeIs('admin.visits.all') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                <a href="{{ route('admin.visits.all') }}" class="sidebar-link pl-8 {{ request()->routeIs('admin.visits.all') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                                     <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                     </svg>
                                     Todas las Visitas
                                 </a>
-                                <a href="{{ route('admin.visits.approved') }}" class="sidebar-link {{ request()->routeIs('admin.visits.approved') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                <a href="{{ route('admin.visits.approved') }}" class="sidebar-link pl-8 {{ request()->routeIs('admin.visits.approved') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                                     <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     Visitas Aprobadas
                                 </a>
-                                <a href="{{ route('admin.visits.calendar') }}" class="sidebar-link {{ request()->routeIs('admin.visits.calendar') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                <a href="{{ route('admin.visits.calendar') }}" class="sidebar-link pl-8 {{ request()->routeIs('admin.visits.calendar') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                                     <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                     Calendario
                                 </a>
-                                <a href="{{ route('admin.visits.reports') }}" class="sidebar-link {{ request()->routeIs('admin.visits.reports') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                <a href="{{ route('admin.visits.reports') }}" class="sidebar-link pl-8 {{ request()->routeIs('admin.visits.reports') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                                     <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
                                     </svg>
@@ -102,19 +114,47 @@
 
                         <!-- Sección: Gestión de Usuarios -->
                         <div class="mt-6">
-                            <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gestión de Usuarios</p>
-                            <div class="mt-2 space-y-1">
-                                <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                            <button type="button" 
+                                    class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:bg-gray-50 rounded-md transition-colors"
+                                    onclick="toggleSection('users-section')">
+                                <span>Gestión de Usuarios</span>
+                                <svg class="h-4 w-4 transition-transform duration-200" id="users-section-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="mt-2 space-y-1 {{ $isUsersSection ? '' : 'hidden' }}" id="users-section">
+                                <a href="{{ route('admin.users.index') }}" class="sidebar-link pl-8 {{ request()->routeIs('admin.users.*') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                                     <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                                     </svg>
                                     Usuarios
                                 </a>
-                                <a href="{{ route('admin.roles.index') }}" class="sidebar-link {{ request()->routeIs('admin.roles.*') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                <a href="{{ route('admin.roles.index') }}" class="sidebar-link pl-8 {{ request()->routeIs('admin.roles.*') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                                     <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                     </svg>
                                     Roles y Permisos
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Sección: Comunicación -->
+                        <div class="mt-6">
+                            <button type="button" 
+                                    class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:bg-gray-50 rounded-md transition-colors"
+                                    onclick="toggleSection('communication-section')">
+                                <span>Comunicación</span>
+                                <svg class="h-4 w-4 transition-transform duration-200" id="communication-section-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="mt-2 space-y-1 {{ $isCommsSection ? '' : 'hidden' }}" id="communication-section">
+                                <a href="{{ route('chat.index') }}" class="sidebar-link pl-8 {{ request()->routeIs('chat.*') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                    <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
+                                    Chat
+                                    <span id="chat-notifications" class="ml-auto inline-flex items-center rounded-full bg-danger-100 px-2 py-0.5 text-xs font-medium text-danger-800 hidden">0</span>
                                 </a>
                             </div>
                         </div>
@@ -130,14 +170,16 @@
                         </a>
                     @endif
                     
-                    <!-- Chat -->
-                    <a href="{{ route('chat.index') }}" class="sidebar-link {{ request()->routeIs('chat.*') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                        <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                        Chat
-                        <span id="chat-notifications" class="ml-auto inline-flex items-center rounded-full bg-danger-100 px-2 py-0.5 text-xs font-medium text-danger-800 hidden">0</span>
-                    </a>
+                    @if(!auth()->user()->isSuperAdmin())
+                        <!-- Chat -->
+                        <a href="{{ route('chat.index') }}" class="sidebar-link {{ request()->routeIs('chat.*') ? 'bg-primary-100 text-primary-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                            <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                            Chat
+                            <span id="chat-notifications" class="ml-auto inline-flex items-center rounded-full bg-danger-100 px-2 py-0.5 text-xs font-medium text-danger-800 hidden">0</span>
+                        </a>
+                    @endif
                 </div>
             </nav>
             
@@ -315,6 +357,47 @@
                     }
                 });
             }
+
+            // Función para manejar secciones colapsables
+            window.toggleSection = function(sectionId) {
+                const section = document.getElementById(sectionId);
+                const icon = document.getElementById(sectionId + '-icon');
+                
+                if (section && icon) {
+                    section.classList.toggle('hidden');
+                    icon.classList.toggle('rotate-180');
+                }
+            };
+
+            // Auto-expandir secciones según la ruta actual al cargar
+            @if(auth()->user()->isSuperAdmin())
+                @php
+                    $isVisitsSection = request()->routeIs('admin.visits.*');
+                    $isUsersSection = request()->routeIs('admin.users.*') || request()->routeIs('admin.roles.*');
+                    $isCommsSection = request()->routeIs('chat.*');
+                @endphp
+                @if($isVisitsSection)
+                    // Expandir sección de visitas
+                    const visitsSection = document.getElementById('visits-section');
+                    const visitsIcon = document.getElementById('visits-section-icon');
+                    if (visitsSection) visitsSection.classList.remove('hidden');
+                    if (visitsIcon) visitsIcon.classList.add('rotate-180');
+                @endif
+                @if($isUsersSection)
+                    // Expandir sección de usuarios
+                    const usersSection = document.getElementById('users-section');
+                    const usersIcon = document.getElementById('users-section-icon');
+                    if (usersSection) usersSection.classList.remove('hidden');
+                    if (usersIcon) usersIcon.classList.add('rotate-180');
+                @endif
+                @if($isCommsSection)
+                    // Expandir sección de comunicación
+                    const commsSection = document.getElementById('communication-section');
+                    const commsIcon = document.getElementById('communication-section-icon');
+                    if (commsSection) commsSection.classList.remove('hidden');
+                    if (commsIcon) commsIcon.classList.add('rotate-180');
+                @endif
+            @endif
         });
     </script>
 

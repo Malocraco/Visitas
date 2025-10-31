@@ -58,36 +58,7 @@
     </div>
 </div>
 
-<!-- Estadísticas Generales -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-    <div class="rounded-xl bg-sky-600 text-white shadow-sm">
-        <div class="p-5 flex items-center justify-between">
-            <div>
-                <h3 class="text-3xl font-bold">{{ $totalVisits }}</h3>
-                <p class="opacity-90">Total de Visitas</p>
-            </div>
-            <i class="fas fa-chart-line fa-3x opacity-80"></i>
-        </div>
-    </div>
-    <div class="rounded-xl bg-emerald-600 text-white shadow-sm">
-        <div class="p-5 flex items-center justify-between">
-            <div>
-                <h3 class="text-3xl font-bold">{{ $thisMonthVisits }}</h3>
-                <p class="opacity-90">Visitas este Mes</p>
-            </div>
-            <i class="fas fa-calendar-alt fa-3x opacity-80"></i>
-        </div>
-    </div>
-    <div class="rounded-xl bg-cyan-600 text-white shadow-sm">
-        <div class="p-5 flex items-center justify-between">
-            <div>
-                <h3 class="text-3xl font-bold">{{ $thisYearVisits }}</h3>
-                <p class="opacity-90">Visitas este Año</p>
-            </div>
-            <i class="fas fa-calendar fa-3x opacity-80"></i>
-        </div>
-    </div>
-</div>
+
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
@@ -190,34 +161,44 @@
             </h5>
         </div>
         <div class="p-6">
+            <div class="space-y-4">
                 @foreach($visitsByStatus as $status)
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center text-gray-700">
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    <div class="flex items-center">
                         @switch($status->status)
                             @case('pending')
-                                <i class="fas fa-clock text-yellow-500 mr-2"></i>
-                                <span>Pendientes</span>
+                                <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-3">
+                                    <i class="fas fa-clock text-yellow-600"></i>
+                                </div>
+                                <span class="font-medium text-gray-700">Pendientes</span>
                                 @break
                             @case('approved')
-                                <i class="fas fa-check text-green-600 mr-2"></i>
-                                <span>Aprobadas</span>
+                                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                                    <i class="fas fa-check text-green-600"></i>
+                                </div>
+                                <span class="font-medium text-gray-700">Aprobadas</span>
                                 @break
                             @case('completed')
-                                <i class="fas fa-flag-checkered text-sky-600 mr-2"></i>
-                                <span>Completadas</span>
+                                <div class="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center mr-3">
+                                    <i class="fas fa-flag-checkered text-sky-600"></i>
+                                </div>
+                                <span class="font-medium text-gray-700">Completadas</span>
                                 @break
                             @case('rejected')
-                                <i class="fas fa-times text-red-600 mr-2"></i>
-                                <span>Rechazadas</span>
+                                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                                    <i class="fas fa-times text-red-600"></i>
+                                </div>
+                                <span class="font-medium text-gray-700">Rechazadas</span>
                                 @break
                         @endswitch
                     </div>
                     <div class="text-right">
-                        <span class="font-semibold text-gray-900">{{ $status->total }}</span>
-                        <span class="text-xs text-gray-500">({{ number_format(($status->total / $totalVisits) * 100, 1) }}%)</span>
+                        <div class="text-lg font-bold text-gray-900">{{ $status->total }}</div>
+                        <div class="text-xs text-gray-500">({{ number_format(($status->total / $totalVisits) * 100, 1) }}%)</div>
                     </div>
                 </div>
                 @endforeach
+            </div>
         </div>
     </div>
 </div>

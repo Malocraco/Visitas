@@ -48,20 +48,20 @@
 <!-- Modal de Detalles de Visita -->
 <div class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full hidden z-50" id="visitModal">
     <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto">
-            <div class="flex items-center justify-between p-6 border-b border-gray-200">
-                <h5 class="text-lg font-semibold text-gray-900 flex items-center">
-                    <i class="fas fa-eye mr-2 text-gray-600"></i>Detalles de la Visita
+        <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-md mx-auto">
+            <div class="flex items-center justify-between p-3 border-b border-gray-200">
+                <h5 class="text-sm font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-eye mr-2 text-gray-600 text-xs"></i>Detalles de la Visita
                 </h5>
                 <button type="button" class="text-gray-400 hover:text-gray-600 transition-colors" onclick="document.getElementById('visitModal').classList.add('hidden')">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
             <div class="p-6" id="visitModalBody"></div>
-            <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
-                <button type="button" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none" onclick="document.getElementById('visitModal').classList.add('hidden')">Cerrar</button>
-                <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-sky-600 hover:bg-sky-700 focus:outline-none" id="viewDetailsBtn">
-                    <i class="fas fa-external-link-alt mr-2"></i>Ver Detalles Completos
+            <div class="flex items-center justify-end gap-2 p-3 border-t border-gray-200">
+                <button type="button" class="px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none" onclick="document.getElementById('visitModal').classList.add('hidden')">Cerrar</button>
+                <a href="#" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none" id="viewDetailsBtn">
+                    <i class="fas fa-external-link-alt mr-1.5 text-xs"></i>Ver Detalles
                 </a>
             </div>
         </div>
@@ -89,6 +89,17 @@
      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
  }
 
+ /* Estilos para días con visitas agendadas */
+ .fc-daygrid-day.has-visit {
+     background-color: #ffc107 !important;
+     cursor: pointer;
+ }
+ 
+ .fc-daygrid-day.has-visit .fc-daygrid-day-number {
+     color: #856404 !important;
+     font-weight: 700;
+ }
+ 
 .fc-event:hover {
     opacity: 0.8;
     transform: scale(1.02);
@@ -232,16 +243,48 @@ document.addEventListener('DOMContentLoaded', function() {
             right: 'dayGridMonth,dayGridWeek'
         },
         events: allEvents,
-        eventClick: function(info) {
-            if (info.event.display === 'background') {
-                // Es un día no disponible
-                showUnavailableDayModal(info.event.title, info.event.start);
-            } else {
-                // Es una visita
-                showVisitModal(info.event.extendedProps.visit);
-            }
-        },
         dayCellDidMount: function(arg) {
+            // Primero verificar si hay visitas en este día
+            const dateStr = arg.date.toISOString().split('T')[0];
+            const visitEvent = events.find(event => {
+                const eventDate = new Date(event.start);
+                const eventDateStr = eventDate.toISOString().split('T')[0];
+                return eventDateStr === dateStr && 
+                       (event.extendedProps?.isVisit === true || event.isVisit === true || event.visit);
+            });
+            
+            if (visitEvent) {
+                // Colorear todo el día de amarillo si hay una visita
+                arg.el.style.backgroundColor = '#ffc107';
+                arg.el.style.color = '#856404';
+                arg.el.classList.add('has-visit');
+                
+                // Asegurar que el número del día tenga buen contraste
+                const dayNumber = arg.el.querySelector('.fc-daygrid-day-number');
+                if (dayNumber) {
+                    dayNumber.style.color = '#856404';
+                    dayNumber.style.fontWeight = '700';
+                }
+                
+                // Agregar evento de click para mostrar detalles de la visita
+                arg.el.addEventListener('click', function() {
+                    const visitData = visitEvent.visit || visitEvent.extendedProps?.visit;
+                    if (visitData) {
+                        showVisitModal(visitData);
+                    }
+                });
+                
+                // Tooltip con información de la visita
+                const visitData = visitEvent.visit || visitEvent.extendedProps?.visit;
+                if (visitData && visitData.user) {
+                    arg.el.title = `Visita #${visitData.id} - ${visitData.user.name}`;
+                } else {
+                    arg.el.title = visitEvent.title || 'Visita agendada';
+                }
+                return; // No aplicar otras reglas si hay visita
+            }
+            
+            // Resto del código para días sin visitas
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const currentDate = new Date(arg.date);
@@ -275,7 +318,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             // Verificar si es un día no disponible del mes actual (festivos)
             else {
-                const dateStr = arg.date.toISOString().split('T')[0];
                 const unavailableDay = unavailableDays.find(day => day.date === dateStr);
                 
                 if (unavailableDay) {
@@ -291,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 // Marcar días disponibles (días futuros que no son fines de semana ni festivos)
                 else if (currentDate >= today) {
-                    // Verificar si no hay eventos en este día
+                    // Verificar si no hay eventos en este día (solo visitas, no días no disponibles)
                     const hasEvents = events.some(event => {
                         const eventDate = new Date(event.start);
                         eventDate.setHours(0, 0, 0, 0);
@@ -308,8 +350,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
         eventDidMount: function(info) {
+            // Ocultar eventos de fondo de visitas ya que el día completo se colorea en dayCellDidMount
             if (info.event.display === 'background') {
-                info.el.style.opacity = '0.3';
+                if (info.event.extendedProps && info.event.extendedProps.isVisit) {
+                    // Ocultar completamente el evento ya que el día se colorea de fondo
+                    info.el.style.display = 'none';
+                } else {
+                    // Días no disponibles se mantienen visibles pero con opacidad
+                    info.el.style.opacity = '0.3';
+                }
             }
         },
 
@@ -363,49 +412,72 @@ document.addEventListener('DOMContentLoaded', function() {
         const viewDetailsBtn = document.getElementById('viewDetailsBtn');
         
         modalBody.innerHTML = `
-            <div class="row">
-                <div class="col-md-6">
-                    <h6 class="text-primary">Información de la Visita</h6>
-                    <table class="table table-borderless">
-                        <tr>
-                            <td><strong>ID:</strong></td>
-                            <td>#${visit.id}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Estado:</strong></td>
-                            <td>
-                                ${getStatusBadge(visit.status)}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Fecha:</strong></td>
-                            <td>${formatDate(visit.preferred_date)}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Hora Inicio:</strong></td>
-                            <td>${visit.preferred_start_time}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Hora Fin:</strong></td>
-                            <td>${visit.preferred_end_time}</td>
-                        </tr>
-                    </table>
+            <div class="space-y-6">
+                <!-- Información de la Visita -->
+                <div>
+                    <h6 class="text-sm font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-calendar-check text-sky-600 mr-2"></i>
+                        Información de la Visita
+                    </h6>
+                    <div class="space-y-3.5 pl-6">
+                        <div class="flex items-start">
+                            <span class="text-xs font-semibold text-gray-500 w-20 flex-shrink-0 uppercase tracking-wide">ID:</span>
+                            <span class="text-sm text-gray-900 font-bold">#${visit.id}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-xs font-semibold text-gray-500 w-20 flex-shrink-0 uppercase tracking-wide">Estado:</span>
+                            <span class="flex-1">${getStatusBadge(visit.status)}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-xs font-semibold text-gray-500 w-20 flex-shrink-0 uppercase tracking-wide">Fecha:</span>
+                            <span class="text-sm text-gray-900">${formatDate(visit.preferred_date)}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-xs font-semibold text-gray-500 w-20 flex-shrink-0 uppercase tracking-wide">Hora:</span>
+                            <span class="text-sm text-gray-900">${visit.preferred_start_time} - ${visit.preferred_end_time}</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <h6 class="text-primary">Información del Visitante</h6>
-                    <p><strong>Nombre:</strong> ${visit.user.name}</p>
-                    <p><strong>Email:</strong> ${visit.contact_email}</p>
-                    <p><strong>Teléfono:</strong> ${visit.contact_phone}</p>
-                    <p><strong>Institución:</strong> ${visit.institution_name}</p>
-                    <p><strong>Propósito:</strong> ${visit.visit_purpose}</p>
+                
+                <!-- Separador -->
+                <div class="border-t border-gray-200"></div>
+                
+                <!-- Información del Visitante -->
+                <div>
+                    <h6 class="text-sm font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-user text-sky-600 mr-2"></i>
+                        Información del Visitante
+                    </h6>
+                    <div class="space-y-3.5 pl-6">
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Nombre:</span>
+                            <p class="text-sm text-gray-900 font-medium">${visit.user.name}</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Email:</span>
+                            <p class="text-sm text-gray-900 break-all">${visit.contact_email || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Teléfono:</span>
+                            <p class="text-sm text-gray-900">${visit.contact_phone || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Institución:</span>
+                            <p class="text-sm text-gray-900">${visit.institution_name || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Propósito:</span>
+                            <p class="text-sm text-gray-900">${visit.visit_purpose || 'N/A'}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
         
         viewDetailsBtn.href = `/admin/visits/${visit.id}/details`;
+        viewDetailsBtn.style.display = 'inline-flex';
         
         document.getElementById('visitModal').classList.remove('hidden');
-        modal.show();
     }
     
     // Función para mostrar modal de día no disponible
@@ -413,15 +485,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalBody = document.getElementById('visitModalBody');
         const viewDetailsBtn = document.getElementById('viewDetailsBtn');
         
+        const dateObj = date instanceof Date ? date : new Date(date);
+        const formattedDate = formatDate(dateObj);
+        
         modalBody.innerHTML = `
-            <div class="text-center">
-                <i class="fas fa-ban fa-3x text-danger mb-3"></i>
-                <h5 class="text-danger">Día No Disponible</h5>
-                <p class="lead">${reason}</p>
-                <p class="text-muted">${formatDate(date)}</p>
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    No se pueden programar visitas en este día.
+            <div class="text-center py-2">
+                <div class="flex justify-center mb-2">
+                    <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                        <i class="fas fa-ban text-red-600"></i>
+                    </div>
+                </div>
+                <h5 class="text-sm font-bold text-red-600 mb-1">Día No Disponible</h5>
+                <p class="text-xs font-medium text-gray-700 mb-1">${reason}</p>
+                <p class="text-xs text-gray-500 mb-2">${formattedDate}</p>
+                <div class="mt-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                    <div class="flex items-center justify-center">
+                        <i class="fas fa-info-circle text-blue-600 mr-1.5 text-xs"></i>
+                        <p class="text-xs text-blue-800">No se pueden programar visitas en este día.</p>
+                    </div>
                 </div>
             </div>
         `;
@@ -429,23 +510,23 @@ document.addEventListener('DOMContentLoaded', function() {
         viewDetailsBtn.style.display = 'none';
         
         document.getElementById('visitModal').classList.remove('hidden');
-        modal.show();
     }
     
     // Función para obtener badge de estado
     function getStatusBadge(status) {
         const badges = {
-            'pending': '<span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i>Pendiente</span>',
-            'approved': '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Aprobada</span>',
-            'completed': '<span class="badge bg-info"><i class="fas fa-flag-checkered me-1"></i>Completada</span>',
-            'rejected': '<span class="badge bg-danger"><i class="fas fa-times me-1"></i>Rechazada</span>'
+            'pending': '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><i class="fas fa-clock mr-1"></i>Pendiente</span>',
+            'approved': '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check mr-1"></i>Aprobada</span>',
+            'completed': '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"><i class="fas fa-flag-checkered mr-1"></i>Completada</span>',
+            'rejected': '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"><i class="fas fa-times mr-1"></i>Rechazada</span>',
+            'postponed': '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"><i class="fas fa-calendar-times mr-1"></i>Pospuesta</span>'
         };
         return badges[status] || '';
     }
     
     // Función para formatear fecha
-    function formatDate(dateString) {
-        const date = new Date(dateString);
+    function formatDate(dateInput) {
+        const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
         return date.toLocaleDateString('es-ES', {
             weekday: 'long',
             year: 'numeric',

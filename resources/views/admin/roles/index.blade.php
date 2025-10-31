@@ -12,32 +12,38 @@
 </div>
 
 <!-- Estadísticas -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-    <div class="rounded-xl bg-indigo-600 text-white shadow-sm">
-        <div class="p-5 flex items-center justify-between">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl text-white shadow-lg hover:shadow-xl transition-shadow">
+        <div class="p-6 flex items-center justify-between">
             <div>
-                <h4 class="text-2xl font-bold">{{ $roles->total() }}</h4>
-                <p class="opacity-90">Total Roles</p>
+                <p class="text-indigo-100 text-sm font-medium mb-1">Total Roles</p>
+                <h4 class="text-4xl font-bold">{{ $roles->total() }}</h4>
             </div>
-            <i class="fas fa-user-tag fa-2x opacity-80"></i>
+            <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                <i class="fas fa-user-tag fa-2x"></i>
+            </div>
         </div>
     </div>
-    <div class="rounded-xl bg-emerald-600 text-white shadow-sm">
-        <div class="p-5 flex items-center justify-between">
+    <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl text-white shadow-lg hover:shadow-xl transition-shadow">
+        <div class="p-6 flex items-center justify-between">
             <div>
-                <h4 class="text-2xl font-bold">{{ $roles->sum('users_count') }}</h4>
-                <p class="opacity-90">Usuarios Asignados</p>
+                <p class="text-emerald-100 text-sm font-medium mb-1">Usuarios Asignados</p>
+                <h4 class="text-4xl font-bold">{{ $roles->sum('users_count') }}</h4>
             </div>
-            <i class="fas fa-users fa-2x opacity-80"></i>
+            <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                <i class="fas fa-users fa-2x"></i>
+            </div>
         </div>
     </div>
-    <div class="rounded-xl bg-sky-600 text-white shadow-sm">
-        <div class="p-5 flex items-center justify-between">
+    <div class="bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl text-white shadow-lg hover:shadow-xl transition-shadow">
+        <div class="p-6 flex items-center justify-between">
             <div>
-                <h4 class="text-2xl font-bold">{{ \App\Models\Permission::count() ?? 0 }}</h4>
-                <p class="opacity-90">Permisos Disponibles</p>
+                <p class="text-sky-100 text-sm font-medium mb-1">Permisos Disponibles</p>
+                <h4 class="text-4xl font-bold">{{ \App\Models\Permission::count() ?? 0 }}</h4>
             </div>
-            <i class="fas fa-key fa-2x opacity-80"></i>
+            <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                <i class="fas fa-key fa-2x"></i>
+            </div>
         </div>
     </div>
 </div>

@@ -148,10 +148,9 @@ class VisitManagementController extends Controller
         
         foreach ($visits as $visit) {
             $status = $visit->status;
-            $color = '';
             $title = '';
             
-            // Todas las visitas se muestran en amarillo (días agendados)
+            // Todas las visitas se muestran en amarillo como fondo completo del día
             $color = '#ffc107'; // Amarillo para todas las visitas
             $title = "Visita #{$visit->id} - {$visit->user->name} ({$status})";
             
@@ -160,8 +159,28 @@ class VisitManagementController extends Controller
                 'id' => $visit->id,
                 'title' => $title,
                 'start' => $eventDate->format('Y-m-d'),
+                'end' => $eventDate->format('Y-m-d'),
+                'display' => 'background',
                 'color' => $color,
-                'visit' => $visit
+                'visit' => [
+                    'id' => $visit->id,
+                    'status' => $visit->status,
+                    'preferred_date' => $visit->preferred_date ? $visit->preferred_date->format('Y-m-d') : null,
+                    'preferred_start_time' => $visit->preferred_start_time,
+                    'preferred_end_time' => $visit->preferred_end_time,
+                    'contact_email' => $visit->contact_email,
+                    'contact_phone' => $visit->contact_phone,
+                    'institution_name' => $visit->institution_name,
+                    'visit_purpose' => $visit->visit_purpose,
+                    'user' => [
+                        'name' => $visit->user->name,
+                        'email' => $visit->user->email
+                    ]
+                ],
+                'isVisit' => true,
+                'extendedProps' => [
+                    'isVisit' => true
+                ]
             ];
         }
 
