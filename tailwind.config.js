@@ -6,20 +6,29 @@ export default {
     "./resources/**/*.vue",
     "./app/**/*.php",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
+        'primary-green': '#00875A',
+        'sena-green': '#00875A',
+        'sena-green-dark': '#006B47',
+        'sena-green-light': '#00A66B',
+        'background-light': '#FFFFFF',
+        'background-dark': '#F5F5F5',
+        'card-dark': '#FFFFFF',
+        'border-dark': '#E0E0E0',
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#00875A',
+          600: '#00875A',
+          700: '#006B47',
+          800: '#005a3a',
+          900: '#004a2e',
         },
         secondary: {
           50: '#f8fafc',
@@ -72,11 +81,13 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif'],
+        display: ['Inter', 'sans-serif'],
       },
       boxShadow: {
         'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
         'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
         'strong': '0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 2px 10px -2px rgba(0, 0, 0, 0.05)',
+        '3xl': '0 35px 60px -12px rgba(0, 135, 90, 0.25), 0 0 0 1px rgba(0, 135, 90, 0.1)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

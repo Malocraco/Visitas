@@ -122,7 +122,16 @@ class User extends Authenticatable
      */
     public function hasAnyRole($roles): bool
     {
-        return $this->roles()->whereIn('name', (array) $roles)->exists();
+        $roles = (array) $roles;
+        
+        // Si los roles están cargados, verificar en memoria primero (más rápido)
+        if ($this->relationLoaded('roles')) {
+            $userRoleNames = $this->roles->pluck('name')->toArray();
+            return !empty(array_intersect($roles, $userRoleNames));
+        }
+        
+        // Si no están cargados, hacer consulta a la base de datos
+        return $this->roles()->whereIn('name', $roles)->exists();
     }
 
     /**

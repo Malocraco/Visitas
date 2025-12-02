@@ -9,7 +9,7 @@ use App\Http\Controllers\VisitManagementController;
 
 // Ruta principal
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('home');
 });
 
 // Rutas de autenticación
@@ -63,6 +63,12 @@ Route::middleware('auth')->group(function () {
         // Calendario (compartido)
         Route::get('/admin/visits/calendar', [VisitManagementController::class, 'calendar'])
             ->name('admin.visits.calendar');
+        
+        // Editar días del calendario (solo superadmin)
+        Route::post('/admin/visits/calendar/update-day', [VisitManagementController::class, 'updateCalendarDay'])
+            ->name('admin.visits.calendar.update-day');
+        Route::delete('/admin/visits/calendar/delete-day/{date}', [VisitManagementController::class, 'deleteCalendarDay'])
+            ->name('admin.visits.calendar.delete-day');
         
         // Detalles de visita (compartido)
         Route::get('/admin/visits/{id}/details', [VisitManagementController::class, 'visitDetails'])

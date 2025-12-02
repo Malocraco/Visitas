@@ -7,6 +7,7 @@ use App\Models\Visit;
 use App\Models\User;
 use App\Models\VisitActivity;
 use App\Models\VisitSchedule;
+use App\Models\CalendarDay;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -183,23 +184,89 @@ class VisitManagementController extends Controller
                 ]
             ];
         }
-
-        // Días no disponibles (fines de semana, días festivos y días pasados)
-        $unavailableDays = $this->getUnavailableDays($year, $month);
         
-        return view('admin.visits.calendar', compact('events', 'unavailableDays', 'year', 'month'));
+        // Agregar días agendados por superadmin como eventos
+        $firstDay = Carbon::create($year, $month, 1);
+        $lastDay = $firstDay->copy()->endOfMonth();
+        $scheduledDays = CalendarDay::whereBetween('date', [$firstDay->format('Y-m-d'), $lastDay->format('Y-m-d')])
+            ->where('status', 'scheduled')
+            ->get();
+        
+        foreach ($scheduledDays as $scheduledDay) {
+            $entryTime = $scheduledDay->entry_time ? $scheduledDay->entry_time->format('H:i') : '';
+            $exitTime = $scheduledDay->exit_time ? $scheduledDay->exit_time->format('H:i') : '';
+            $timeRange = ($entryTime && $exitTime) ? " ({$entryTime} - {$exitTime})" : '';
+            
+            $events[] = [
+                'id' => 'calendar_day_' . $scheduledDay->id,
+                'title' => $scheduledDay->institution_name . $timeRange,
+                'start' => $scheduledDay->date->format('Y-m-d'),
+                'end' => $scheduledDay->date->format('Y-m-d'),
+                'display' => 'background',
+                'color' => '#ffc107', // Amarillo igual que las visitas
+                'calendarDay' => [
+                    'id' => $scheduledDay->id,
+                    'institution_name' => $scheduledDay->institution_name,
+                    'entry_time' => $entryTime,
+                    'exit_time' => $exitTime,
+                    'notes' => $scheduledDay->notes,
+                    'date' => $scheduledDay->date->format('Y-m-d'),
+                ],
+                'isCalendarDay' => true,
+                'extendedProps' => [
+                    'isCalendarDay' => true
+                ]
+            ];
+        }
+
+        // Obtener días editados por el superadministrador (una sola vez)
+        $firstDay = Carbon::create($year, $month, 1);
+        $lastDay = $firstDay->copy()->endOfMonth();
+        $calendarDaysCollection = CalendarDay::whereBetween('date', [$firstDay->format('Y-m-d'), $lastDay->format('Y-m-d')])
+            ->get();
+        
+        // Días no disponibles (fines de semana, días festivos y días pasados)
+        $unavailableDays = $this->getUnavailableDays($year, $month, $calendarDaysCollection);
+        
+        // Convertir a array asociativo con fecha como clave para JavaScript
+        $calendarDays = [];
+        foreach ($calendarDaysCollection as $day) {
+            $calendarDays[$day->date->format('Y-m-d')] = [
+                'id' => $day->id,
+                'date' => $day->date->format('Y-m-d'),
+                'status' => $day->status,
+                'institution_name' => $day->institution_name,
+                'entry_time' => $day->entry_time ? $day->entry_time->format('H:i') : null,
+                'exit_time' => $day->exit_time ? $day->exit_time->format('H:i') : null,
+                'notes' => $day->notes,
+            ];
+        }
+        
+        $isSuperAdmin = auth()->user()->isSuperAdmin();
+        
+        return view('admin.visits.calendar', compact('events', 'unavailableDays', 'year', 'month', 'calendarDays', 'isSuperAdmin'));
     }
 
     /**
      * Obtener días no disponibles (fines de semana, días festivos y días pasados)
      */
-    private function getUnavailableDays($year, $month)
+    private function getUnavailableDays($year, $month, $calendarDaysCollection = null)
     {
         $unavailableDays = [];
         
         // Obtener el primer y último día del mes
         $firstDay = Carbon::create($year, $month, 1);
         $lastDay = $firstDay->copy()->endOfMonth();
+        
+        // Obtener días editados por superadmin si no se pasan como parámetro
+        if ($calendarDaysCollection === null) {
+            $calendarDaysCollection = CalendarDay::whereBetween('date', [$firstDay->format('Y-m-d'), $lastDay->format('Y-m-d')])
+                ->get();
+        }
+        
+        $calendarDays = $calendarDaysCollection->keyBy(function($day) {
+            return $day->date->format('Y-m-d');
+        });
         
         // Días festivos (puedes agregar más según necesites)
         $holidays = [
@@ -216,11 +283,24 @@ class VisitManagementController extends Controller
         while ($currentDay <= $lastDay) {
             $dayOfWeek = $currentDay->dayOfWeek;
             $dateString = $currentDay->format('m-d');
+            $dateKey = $currentDay->format('Y-m-d');
             
+            // Verificar si el día fue editado por superadmin
+            if (isset($calendarDays[$dateKey])) {
+                $calendarDay = $calendarDays[$dateKey];
+                if ($calendarDay->status === 'unavailable') {
+                    $unavailableDays[] = [
+                        'date' => $dateKey,
+                        'reason' => 'Día no disponible (editado por administrador)',
+                        'type' => 'admin_unavailable'
+                    ];
+                }
+                // Si está agendado, no se agrega a unavailableDays (se maneja en events)
+            }
             // Días pasados (antes de hoy)
-            if ($currentDay->lt($today)) {
+            elseif ($currentDay->lt($today)) {
                 $unavailableDays[] = [
-                    'date' => $currentDay->format('Y-m-d'),
+                    'date' => $dateKey,
                     'reason' => 'Día pasado',
                     'type' => 'past'
                 ];
@@ -228,7 +308,7 @@ class VisitManagementController extends Controller
             // Fines de semana (0 = domingo, 6 = sábado)
             elseif ($dayOfWeek == 0 || $dayOfWeek == 6) {
                 $unavailableDays[] = [
-                    'date' => $currentDay->format('Y-m-d'),
+                    'date' => $dateKey,
                     'reason' => 'Fin de semana',
                     'type' => 'weekend'
                 ];
@@ -236,7 +316,7 @@ class VisitManagementController extends Controller
             // Días festivos
             elseif (in_array($dateString, $holidays)) {
                 $unavailableDays[] = [
-                    'date' => $currentDay->format('Y-m-d'),
+                    'date' => $dateKey,
                     'reason' => 'Día festivo',
                     'type' => 'holiday'
                 ];
@@ -375,5 +455,112 @@ class VisitManagementController extends Controller
             ->findOrFail($id);
 
         return view('admin.visits.details', compact('visit'));
+    }
+
+    /**
+     * Crear o actualizar un día del calendario (solo superadmin)
+     */
+    public function updateCalendarDay(Request $request)
+    {
+        // Verificar que el usuario sea superadmin
+        if (!auth()->user()->isSuperAdmin()) {
+            return response()->json(['success' => false, 'error' => 'No tienes permisos para realizar esta acción.'], 403);
+        }
+
+        try {
+            $validated = $request->validate([
+                'date' => 'required|date',
+                'status' => 'required|in:available,unavailable,scheduled',
+                'institution_name' => 'required_if:status,scheduled|string|max:255',
+                'entry_time' => 'required_if:status,scheduled|date_format:H:i',
+                'exit_time' => 'required_if:status,scheduled|date_format:H:i',
+                'notes' => 'nullable|string|max:1000',
+            ]);
+            
+            // Si el status es 'available', eliminar el registro en lugar de actualizar
+            if ($request->status === 'available') {
+                $calendarDay = CalendarDay::where('date', $request->date)->first();
+                if ($calendarDay) {
+                    $calendarDay->delete();
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'El día ahora está disponible.',
+                    ]);
+                } else {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'El día ya está disponible.',
+                    ]);
+                }
+            }
+
+            // Validar que la hora de salida sea después de la hora de entrada
+            if ($request->status === 'scheduled' && $request->entry_time && $request->exit_time) {
+                $entryTime = Carbon::createFromFormat('H:i', $request->entry_time);
+                $exitTime = Carbon::createFromFormat('H:i', $request->exit_time);
+                if ($exitTime->lte($entryTime)) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'La hora de salida debe ser posterior a la hora de entrada.',
+                        'errors' => ['exit_time' => ['La hora de salida debe ser posterior a la hora de entrada.']]
+                    ], 422);
+                }
+            }
+
+            $calendarDay = CalendarDay::updateOrCreate(
+                ['date' => $request->date],
+                [
+                    'status' => $request->status,
+                    'institution_name' => $request->status === 'scheduled' ? $request->institution_name : null,
+                    'entry_time' => $request->status === 'scheduled' ? $request->entry_time : null,
+                    'exit_time' => $request->status === 'scheduled' ? $request->exit_time : null,
+                    'notes' => $request->notes ?? null,
+                    'created_by' => auth()->id(),
+                ]
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => $calendarDay->wasRecentlyCreated ? 'Día del calendario creado exitosamente.' : 'Día del calendario actualizado exitosamente.',
+                'calendarDay' => $calendarDay->load('creator'),
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error de validación.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al guardar: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Eliminar o restaurar un día del calendario a disponible (solo superadmin)
+     */
+    public function deleteCalendarDay(Request $request, $date)
+    {
+        // Verificar que el usuario sea superadmin
+        if (!auth()->user()->isSuperAdmin()) {
+            return response()->json(['error' => 'No tienes permisos para realizar esta acción.'], 403);
+        }
+
+        $calendarDay = CalendarDay::where('date', $date)->first();
+
+        if ($calendarDay) {
+            $calendarDay->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Día del calendario eliminado exitosamente. El día vuelve a estar disponible.',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'El día ya está disponible.',
+        ]);
     }
 }

@@ -7,6 +7,12 @@
 @section('content')
 <div class="space-y-6">
     <div>
+        <a href="{{ url('/') }}" class="inline-flex items-center text-sm text-gray-600 hover:text-primary-green transition-colors mb-4">
+            <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Volver al inicio
+        </a>
         <h3 class="text-lg font-medium leading-6 text-gray-900">
             Registro de Visitante
         </h3>
@@ -21,7 +27,7 @@
         <!-- Información Personal -->
         <div>
             <h4 class="text-md font-medium text-gray-900 mb-4 flex items-center">
-                <svg class="mr-2 h-5 w-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="mr-2 h-5 w-5 text-primary-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
                 Información Personal
@@ -131,7 +137,7 @@
         <!-- Información de Seguridad -->
         <div>
             <h4 class="text-md font-medium text-gray-900 mb-4 flex items-center">
-                <svg class="mr-2 h-5 w-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="mr-2 h-5 w-5 text-primary-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
                 Información de Seguridad
@@ -179,9 +185,9 @@
                    name="terms" 
                    type="checkbox" 
                    required
-                   class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                   class="h-4 w-4 text-primary-green focus:ring-primary-green border-gray-300 rounded">
             <label for="terms" class="ml-2 block text-sm text-gray-900">
-                Acepto los <a href="#" class="font-medium text-primary-600 hover:text-primary-500">términos y condiciones</a> *
+                Acepto los <a href="#" class="font-medium text-primary-green hover:text-primary-green/80">términos y condiciones</a> *
             </label>
         </div>
         
@@ -198,7 +204,7 @@
     <div class="text-center">
         <p class="text-sm text-gray-600">
             ¿Ya tienes una cuenta? 
-            <a href="{{ route('login') }}" class="font-medium text-primary-600 hover:text-primary-500">
+            <a href="{{ route('login') }}" class="font-medium text-primary-green hover:text-primary-green/80">
                 Inicia sesión aquí
             </a>
         </p>
@@ -207,18 +213,18 @@
 
 <!-- Información adicional -->
 <div class="mt-8">
-    <div class="bg-primary-50 border border-primary-200 rounded-lg p-4">
+    <div class="bg-primary-green/10 border border-primary-green/30 rounded-lg p-4">
         <div class="flex">
             <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="h-5 w-5 text-primary-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
             <div class="ml-3">
-                <h3 class="text-sm font-medium text-primary-800">
+                <h3 class="text-sm font-medium text-primary-green">
                     ¿Por qué registrarse?
                 </h3>
-                <div class="mt-2 text-sm text-primary-700">
+                <div class="mt-2 text-sm text-primary-green/80">
                     <ul class="list-disc list-inside space-y-1">
                         <li>Solicita visitas a la institución de forma fácil y rápida</li>
                         <li>Recibe notificaciones sobre el estado de tus solicitudes</li>

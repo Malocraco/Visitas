@@ -7,6 +7,12 @@
 @section('content')
 <div class="space-y-6">
     <div>
+        <a href="{{ url('/') }}" class="inline-flex items-center text-sm text-gray-600 hover:text-primary-green transition-colors mb-4">
+            <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Volver al inicio
+        </a>
         <h3 class="text-lg font-medium leading-6 text-gray-900">
             Iniciar Sesión
         </h3>
@@ -60,7 +66,7 @@
                 <input id="remember" 
                        name="remember" 
                        type="checkbox" 
-                       class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                       class="h-4 w-4 text-primary-green focus:ring-primary-green border-gray-300 rounded">
                 <label for="remember" class="ml-2 block text-sm text-gray-900">
                     Recordarme
                 </label>
@@ -80,7 +86,7 @@
     <div class="text-center">
         <p class="text-sm text-gray-600">
             ¿No tienes una cuenta? 
-            <a href="{{ route('register') }}" class="font-medium text-primary-600 hover:text-primary-500">
+            <a href="{{ route('register') }}" class="font-medium text-primary-green hover:text-primary-green/80">
                 Regístrate aquí
             </a>
         </p>
